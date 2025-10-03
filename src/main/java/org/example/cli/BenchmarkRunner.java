@@ -3,31 +3,61 @@ package org.example.cli;
 import org.example.algorithms.BoyerMooreMajorityVoteAlgorithm;
 import org.example.metrics.Metrics;
 
-import java.lang.reflect.Method;
-import org.example.algorithms.BoyerMooreMajorityVoteAlgorithm;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class BenchmarkRunner {
+    private static final int[] SIZES = {100, 1000, 10000, 100000};
+
     public static void main(String[] args) {
-        int n = args.length > 0 ? Integer.parseInt(args[0]) : 1000;
-        int[] array = generateRandomArray(n);
+        String outputFile = "benchmark-results.csv";
 
-        Metrics metrics = new Metrics();
+        try (FileWriter writer = new FileWriter(outputFile)) {
+            writer.write("n,version,time(ns),comparisons,candidateUpdates\n");
+
+            for (int n : SIZES) {
+                int[] array = generateRandomArray(n);
+
+                Metrics metricsBaseline = new Metrics();
+                long baselineTime = runBaseline(array, metricsBaseline);
+
+                writer.write(String.format("%d,baseline,%d,%d,%d\n",
+                        n, baselineTime, metricsBaseline.comparisons, metricsBaseline.candidateUpdates));
+
+                Metrics metricsOptimized = new Metrics();
+                long optimizedTime = runOptimized(array, metricsOptimized);
+
+                writer.write(String.format("%d,optimized,%d,%d,%d\n",
+                        n, optimizedTime, metricsOptimized.comparisons, metricsOptimized.candidateUpdates));
+
+                System.out.println("Completed n=" + n);
+            }
+
+            System.out.println("Benchmark results saved to " + outputFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static long runBaseline(int[] array, Metrics metrics) {
         long start = System.nanoTime();
-        int majority = BoyerMooreMajorityVoteAlgorithm.findMajority(array, metrics);
-        long end = System.nanoTime();
+        BoyerMooreMajorityVoteAlgorithm.findMajorityBaseline(array, metrics);
+        return System.nanoTime() - start;
+    }
 
-        System.out.println("Array: " + java.util.Arrays.toString(array));
-        System.out.println("Majority element: " + majority);
-        System.out.println("Execution time (ns): " + (end - start));
-        System.out.println(metrics);
+    private static long runOptimized(int[] array, Metrics metrics) {
+        long start = System.nanoTime();
+        BoyerMooreMajorityVoteAlgorithm.findMajorityOptimized(array, metrics);
+        return System.nanoTime() - start;
     }
 
     private static int[] generateRandomArray(int n) {
-        Random random = new Random();
+        Random rand = new Random();
         int[] arr = new int[n];
         for (int i = 0; i < n; i++) {
-            arr[i] = random.nextInt(10);
+            arr[i] = rand.nextInt(10);
         }
         return arr;
     }
