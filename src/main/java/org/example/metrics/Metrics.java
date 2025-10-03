@@ -11,5 +11,6 @@ public class Metrics {
 
     @Override
     public String toString() {
+        return "Comparisons: " + comparisons + ", Candidate updates: " + candidateUpdates;
     }
 }
