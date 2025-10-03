@@ -9,57 +9,84 @@ import java.util.Random;
 
 public class BenchmarkRunner {
 
-    private static final int[] SIZES = {100, 1000, 10000, 100000};
-
-    public static void main(String[] args) {
-        String outputFile = "benchmark-results.csv";
-
-        try (FileWriter writer = new FileWriter(outputFile)) {
-            writer.write("n,version,time(ns),comparisons,candidateUpdates\n");
-
-            for (int n : SIZES) {
-                int[] array = generateRandomArray(n);
-
-                Metrics metricsBaseline = new Metrics();
-                long baselineTime = runBaseline(array, metricsBaseline);
-
-                writer.write(String.format("%d,baseline,%d,%d,%d\n",
-                        n, baselineTime, metricsBaseline.comparisons, metricsBaseline.candidateUpdates));
-
-                Metrics metricsOptimized = new Metrics();
-                long optimizedTime = runOptimized(array, metricsOptimized);
-
-                writer.write(String.format("%d,optimized,%d,%d,%d\n",
-                        n, optimizedTime, metricsOptimized.comparisons, metricsOptimized.candidateUpdates));
-
-                System.out.println("Completed n=" + n);
-            }
-
-            System.out.println("Benchmark results saved to " + outputFile);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static long runBaseline(int[] array, Metrics metrics) {
-        long start = System.nanoTime();
-        BoyerMooreMajorityVoteAlgorithm.findMajority(array, metrics);
-        return System.nanoTime() - start;
-    }
-
-    private static long runOptimized(int[] array, Metrics metrics) {
-        long start = System.nanoTime();
-        BoyerMooreMajorityVoteAlgorithm.findMajorityOptimized(array, metrics);
-        return System.nanoTime() - start;
-    }
-
     private static int[] generateRandomArray(int n) {
         Random rand = new Random();
         int[] arr = new int[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = rand.nextInt(10);
+        for (int i = 0; i < n; i++) arr[i] = rand.nextInt(10);
+        return arr;
+    }
+
+    private static int[] generateSortedArray(int n) {
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = i / 10;
+        return arr;
+    }
+
+    private static int[] generateReverseSortedArray(int n) {
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = (n - i) / 10;
+        return arr;
+    }
+
+    private static int[] generateNearlySortedArray(int n) {
+        Random rand = new Random();
+        int[] arr = generateSortedArray(n);
+        for (int i = 0; i < n / 20; i++) {
+            int a = rand.nextInt(n);
+            int b = rand.nextInt(n);
+            int tmp = arr[a];
+            arr[a] = arr[b];
+            arr[b] = tmp;
         }
         return arr;
+    }
+
+    private static long measureMemoryUsage(int[] array, Metrics metrics, boolean optimized) {
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+
+        long beforeUsedMem = runtime.totalMemory() - runtime.freeMemory();
+        if (optimized)
+            BoyerMooreMajorityVoteAlgorithm.findMajorityOptimized(array, metrics);
+        else
+            BoyerMooreMajorityVoteAlgorithm.findMajority(array, metrics);
+        long afterUsedMem = runtime.totalMemory() - runtime.freeMemory();
+
+        return afterUsedMem - beforeUsedMem;
+    }
+
+    public static void main(String[] args) throws IOException {
+        int[] sizes = {100, 1000, 10000, 100000};
+        String[] distributions = {"Random", "Sorted", "Reverse", "NearlySorted"};
+
+        try (FileWriter writer = new FileWriter("benchmark_results.csv")) {
+            writer.write("n,distribution,version,time(ns),memory(bytes),comparisons,candidateUpdates\n");
+
+            for (int n : sizes) {
+                for (String dist : distributions) {
+                    int[] array;
+                    switch (dist) {
+                        case "Sorted" -> array = generateSortedArray(n);
+                        case "Reverse" -> array = generateReverseSortedArray(n);
+                        case "NearlySorted" -> array = generateNearlySortedArray(n);
+                        default -> array = generateRandomArray(n);
+                    }
+
+                    Metrics m1 = new Metrics();
+                    long start1 = System.nanoTime();
+                    long mem1 = measureMemoryUsage(array, m1, false);
+                    long end1 = System.nanoTime();
+                    writer.write(n + "," + dist + ",Baseline," + (end1 - start1) + "," + mem1 + "," + m1.comparisons + "," + m1.candidateUpdates + "\n");
+
+                    Metrics m2 = new Metrics();
+                    long start2 = System.nanoTime();
+                    long mem2 = measureMemoryUsage(array, m2, true);
+                    long end2 = System.nanoTime();
+                    writer.write(n + "," + dist + ",Optimized," + (end2 - start2) + "," + mem2 + "," + m2.comparisons + "," + m2.candidateUpdates + "\n");
+                }
+            }
+        }
+
+        System.out.println("Benchmark finished! Results saved to benchmark_results.csv");
     }
 }
