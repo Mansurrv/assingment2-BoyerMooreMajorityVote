@@ -1,10 +1,8 @@
 package org.example.cli;
 
-import org.example.algorithms.BoyerMooreMajorityVoteAlgorithm;
+import org.example.optimizealgorithm.BoyerMooreMajorityVoteAlgorithm;
 import org.example.metrics.Metrics;
 
-import java.lang.reflect.Method;
-import org.example.algorithms.BoyerMooreMajorityVoteAlgorithm;
 import java.util.Random;
 
 public class BenchmarkRunner {

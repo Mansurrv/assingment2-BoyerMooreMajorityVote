@@ -1,4 +1,4 @@
-package org.example.algorithms;
+package org.example.optimizealgorithm;
 
 import org.example.metrics.Metrics;
 
@@ -22,12 +22,23 @@ public class BoyerMooreMajorityVoteAlgorithm {
                 count--;
             }
         }
-
         count = 0;
-        for (int num : nums) {
-            if (num == candidate) count++;
+
+        int majorityThreshold = nums.length / 2;
+
+        for (int i = 0; i < nums.length; i++) {
+            metrics.comparisons++;
+            if (nums[i] == candidate) {
+                count++;
+                if (count > majorityThreshold) {
+                    return candidate;
+                }
+            }
+            if (count + (nums.length - i - 1) < majorityThreshold) {
+                return -1;
+            }
         }
 
-        return count > nums.length / 2 ? candidate : -1;
+        return -1;
     }
 }

@@ -1,6 +1,7 @@
 package org.example.algorithms;
 
 import org.example.metrics.Metrics;
+import org.example.optimizealgorithm.BoyerMooreMajorityVoteAlgorithm;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
