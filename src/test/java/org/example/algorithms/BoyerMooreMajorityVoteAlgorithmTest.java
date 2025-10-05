@@ -10,10 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BoyerMooreMajorityVoteAlgorithmTest {
 
-    // -------------------
-    // Edge case tests
-    // -------------------
-
     @Test
     void testEmptyArray() {
         assertEquals(-1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{}, new Metrics()),
@@ -67,10 +63,6 @@ public class BoyerMooreMajorityVoteAlgorithmTest {
         assertEquals(-1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{1, -1, 2, -2, 3, -3}, new Metrics()),
                 "Mixed numbers without majority should return -1");
     }
-
-    // -------------------
-    // Performance tests
-    // -------------------
 
     private int[] generateRandomArray(int n) {
         Random rand = new Random();
