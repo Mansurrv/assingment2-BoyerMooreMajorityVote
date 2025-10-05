@@ -11,20 +11,10 @@ _You can upload your analysis in /docs/(name_of_your_file).pdf_
 
 ### Boyer-Moore Majority Vote Algorithm. Serikbai Mansur's analysis
 
-<br>
-
-## 📑 Contents
-- [_Architecture notes_](#1-architecture-notes)
-- [_Recurrence Analyze_](#2-recurrence-analyze)
-- [_Constant-Factor Effects_](stant-factor-effects)
-- [_Summary_](#summary)
-
-<br>
-
 ## ⚙️ Clone the Repository
 
 ```
-git clone https://github.com/Mansurrv/SerikbaiMansur_assignment1
+https://github.com/Mansurrv/assingment2-BoyerMooreMajorityVote
 ```
 
 <br>
@@ -51,11 +41,11 @@ git clone https://github.com/Mansurrv/SerikbaiMansur_assignment1
 
 ### 1.1 **Linear Time:**
 
-The complexity is $O(N)$, as the algorithm requires only a single pass through the array.
+The complexity is _O(N)_, as the algorithm requires only a single pass through the array.
 
 ### 1.2 **Constant Space:**
 
-The space complexity is $O(1)$, using only two variables (`candidate` and `count`) regardless of the input size.
+The space complexity is _O(1)_, using only two variables (`candidate` and `count`) regardless of the input size.
 
 <br>
 <br>
@@ -63,15 +53,15 @@ The space complexity is $O(1)$, using only two variables (`candidate` and `count
 # 2. Complexity Analysis
 
 | Metric | Complexity | Notes |
-| :--- | :--- | :--- |
-| **Time** | $O(N)$ | Single pass over the input array. |
-| **Space** | $O(1)$ | Constant memory usage. |
+| :--- |:-----------| :--- |
+| **Time** | _O(N)_     | Single pass over the input array. |
+| **Space** | _O(1)_     | Constant memory usage. |
 
 #### Performance Comparison (Baseline vs Optimized)
 
-My benchmark tests compare the performance of the **optimized** version against the **baseline** implementation as the input size ($N$) increases.
+My benchmark tests compare the performance of the **optimized** version against the **baseline** implementation as the input size (_N_) increases.
 
-### Summary at Maximum Input Size ($N = 100000$)
+### Summary at Maximum Input Size (_N = 100000_)
 
 | Version | Time (ns) | Comparisons |
 | :--- | :--- | :--- |
@@ -79,18 +69,18 @@ My benchmark tests compare the performance of the **optimized** version against 
 | optimized | 2964544 | 155489 |
 
 ### Key Findings
-* **Comparisons:** The optimized version performs **44,511 fewer** comparisons (at $N=100000$). This demonstrates a successful reduction in the constant factor of the algorithm's complexity.
-* **Time:** At the largest input size ($N=100000$), the optimized version is **188,837 ns slower** compared to the baseline. While the optimized version is faster for small $N$, the slight increase in time at large $N$ might be due to overhead from the optimization logic itself.
+* **Comparisons:** The optimized version performs **44,511 fewer** comparisons (at _N=100000_). This demonstrates a successful reduction in the constant factor of the algorithm's complexity.
+* **Time:** At the largest input size (_N=100000_), the optimized version is **188,837 ns slower** compared to the baseline. While the optimized version is faster for small _N_, the slight increase in time at large $N$ might be due to overhead from the optimization logic itself.
 
 ## 🛠 How It Works
-The algorithm relies on the principle that if an element $X$ is a majority element, it remains the majority even after removing any pair $(X, Y)$ where $Y$ is not equal to $X$.
+The algorithm relies on the principle that if an element _X_ is a majority element, it remains the majority even after removing any pair _(X, Y)_ where _Y_ is not equal to _X_.
 
 1.  **Initialization:** Select the first element as the `candidate` and set the `count` to 1.
 2.  **Iteration:** For each subsequent element in the array:
     * If the **`count` is 0**, the current element becomes the new `candidate`, and `count` is reset to 1.
     * If the current element **matches the `candidate`**, increment `count`.
     * If the current element **does not match the `candidate`**, decrement `count`.
-3.  **Final Check:** After the first pass, the `candidate` is the only possible majority element. A **second pass is required** to verify that the element truly occurs more than $N/2$ times (in case no majority element exists).
+3.  **Final Check:** After the first pass, the `candidate` is the only possible majority element. A **second pass is required** to verify that the element truly occurs more than _N/2_ times (in case no majority element exists).
 
 <br>
 
