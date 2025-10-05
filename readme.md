@@ -1,27 +1,75 @@
-# Boyer-Moore Majority Vote Algorithm. Serikbai Mansur's analysis
+![License](https://img.shields.io/badge/java-green)
+![Java](https://img.shields.io/badge/maven-blue)
+![Python](https://img.shields.io/badge/python-yellow)
+![JUnit5](https://img.shields.io/badge/JUnit5-red)
 
-## You can upload your analysis in /docs/(name_of_your_file).pdf
 
-## 💡 Overview
-The **Boyer-Moore Majority Vote Algorithm** is an elegant and highly efficient method for finding the **Majority Element** in an array. A Majority Element is defined as an element that appears **more than $N/2$ times** in an array of length $N$.
+# ![gif](https://github.com/Readme-Workflows/Readme-Icons/blob/main/icons/gifs/wave.gif) Assignment 2
+_You can upload your analysis in /docs/(name_of_your_file).pdf_
 
-### 🔑 Key Features
-1.  **Linear Time:** The complexity is $O(N)$, as the algorithm requires only a single pass through the array.
-2.  **Constant Space:** The space complexity is $O(1)$, using only two variables (`candidate` and `count`) regardless of the input size.
+<br>
 
-![nope](docs/performance-plots/compare_performance.png)
-![nope](docs/performance-plots/compare_algorithm_scalibility.png)
+### Boyer-Moore Majority Vote Algorithm. Serikbai Mansur's analysis
 
-## ⏳ Complexity Analysis
+<br>
+
+## 📑 Contents
+- [_Architecture notes_](#1-architecture-notes)
+- [_Recurrence Analyze_](#2-recurrence-analyze)
+- [_Constant-Factor Effects_](stant-factor-effects)
+- [_Summary_](#summary)
+
+<br>
+
+## ⚙️ Clone the Repository
+
+```
+git clone https://github.com/Mansurrv/SerikbaiMansur_assignment1
+```
+
+<br>
+
+## 🖼 Diagrams
+>The **Boyer-Moore Majority Vote Algorithm** is an elegant and highly efficient method for finding the **Majority Element** in an array. A Majority Element is defined as an element that appears **more than $N/2$ times** in an array of length $N$.
+
+![Algorithms](docs/performance-plots/compare_performance.png)
+![Algorithms](docs/performance-plots/compare_algorithm_scalibility.png)
+
+
+<br>
+
+## 🛠 Technology stack
+- Java Core
+- Python
+- JUnit5
+- Maven
+
+<br>
+<br>
+
+# 1. Key Features
+
+### 1.1 **Linear Time:**
+
+The complexity is $O(N)$, as the algorithm requires only a single pass through the array.
+
+### 1.2 **Constant Space:**
+
+The space complexity is $O(1)$, using only two variables (`candidate` and `count`) regardless of the input size.
+
+<br>
+<br>
+
+# 2. Complexity Analysis
+
 | Metric | Complexity | Notes |
 | :--- | :--- | :--- |
 | **Time** | $O(N)$ | Single pass over the input array. |
 | **Space** | $O(1)$ | Constant memory usage. |
 
----
+#### Performance Comparison (Baseline vs Optimized)
 
-## Performance Comparison (Baseline vs Optimized)
-Our benchmark tests compare the performance of the **optimized** version against the **baseline** implementation as the input size ($N$) increases.
+My benchmark tests compare the performance of the **optimized** version against the **baseline** implementation as the input size ($N$) increases.
 
 ### Summary at Maximum Input Size ($N = 100000$)
 
@@ -34,8 +82,6 @@ Our benchmark tests compare the performance of the **optimized** version against
 * **Comparisons:** The optimized version performs **44,511 fewer** comparisons (at $N=100000$). This demonstrates a successful reduction in the constant factor of the algorithm's complexity.
 * **Time:** At the largest input size ($N=100000$), the optimized version is **188,837 ns slower** compared to the baseline. While the optimized version is faster for small $N$, the slight increase in time at large $N$ might be due to overhead from the optimization logic itself.
 
----
-
 ## 🛠 How It Works
 The algorithm relies on the principle that if an element $X$ is a majority element, it remains the majority even after removing any pair $(X, Y)$ where $Y$ is not equal to $X$.
 
@@ -46,3 +92,7 @@ The algorithm relies on the principle that if an element $X$ is a majority eleme
     * If the current element **does not match the `candidate`**, decrement `count`.
 3.  **Final Check:** After the first pass, the `candidate` is the only possible majority element. A **second pass is required** to verify that the element truly occurs more than $N/2$ times (in case no majority element exists).
 
+<br>
+
+## 👨‍💻 Developer
+- Mansur Serikbai (@mansurrvv)
