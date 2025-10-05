@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Random;
 
 public class BenchmarkRunner {
-
     private static int[] generateRandomArray(int n) {
         Random rand = new Random();
         int[] arr = new int[n];
@@ -29,8 +28,8 @@ public class BenchmarkRunner {
     }
 
     private static int[] generateNearlySortedArray(int n) {
-        Random rand = new Random();
         int[] arr = generateSortedArray(n);
+        Random rand = new Random();
         for (int i = 0; i < n / 20; i++) {
             int a = rand.nextInt(n);
             int b = rand.nextInt(n);
@@ -41,18 +40,19 @@ public class BenchmarkRunner {
         return arr;
     }
 
-    private static long measureMemoryUsage(int[] array, Metrics metrics, boolean optimized) {
+    private static long measureMemoryUsage(int[] array, Metrics metrics, boolean singlePass) {
         Runtime runtime = Runtime.getRuntime();
         runtime.gc();
 
         long beforeUsedMem = runtime.totalMemory() - runtime.freeMemory();
-        if (optimized)
-            BoyerMooreMajorityVoteAlgorithm.findMajorityOptimized(array, metrics);
-        else
+        if (singlePass) {
+            BoyerMooreMajorityVoteAlgorithm.findMajoritySinglePass(array, metrics);
+        } else {
             BoyerMooreMajorityVoteAlgorithm.findMajority(array, metrics);
+        }
         long afterUsedMem = runtime.totalMemory() - runtime.freeMemory();
 
-        return afterUsedMem - beforeUsedMem;
+        return Math.max(afterUsedMem - beforeUsedMem, 0);
     }
 
     public static void main(String[] args) throws IOException {
@@ -76,17 +76,29 @@ public class BenchmarkRunner {
                     long start1 = System.nanoTime();
                     long mem1 = measureMemoryUsage(array, m1, false);
                     long end1 = System.nanoTime();
-                    writer.write(n + "," + dist + ",Baseline," + (end1 - start1) + "," + mem1 + "," + m1.comparisons + "," + m1.candidateUpdates + "\n");
+                    long time1 = end1 - start1;
+
+                    writer.write(String.format("%d,%s,DoublePass,%d,%d,%d,%d%n",
+                            n, dist, time1, mem1, m1.comparisons, m1.candidateUpdates));
+
+                    System.out.printf("✔ n=%d | %s | DoublePass | time=%dns | mem=%dB%n",
+                            n, dist, time1, mem1);
 
                     Metrics m2 = new Metrics();
                     long start2 = System.nanoTime();
                     long mem2 = measureMemoryUsage(array, m2, true);
                     long end2 = System.nanoTime();
-                    writer.write(n + "," + dist + ",Optimized," + (end2 - start2) + "," + mem2 + "," + m2.comparisons + "," + m2.candidateUpdates + "\n");
+                    long time2 = end2 - start2;
+
+                    writer.write(String.format("%d,%s,SinglePass,%d,%d,%d,%d%n",
+                            n, dist, time2, mem2, m2.comparisons, m2.candidateUpdates));
+
+                    System.out.printf("✔ n=%d | %s | SinglePass | time=%dns | mem=%dB%n",
+                            n, dist, time2, mem2);
                 }
             }
         }
 
-        System.out.println("Benchmark finished! Results saved to benchmark_results.csv");
+        System.out.println("\nBenchmark finished! Results saved to benchmark_results.csv");
     }
 }
