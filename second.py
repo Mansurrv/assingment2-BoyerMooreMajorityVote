@@ -3,13 +3,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# 1. Загрузка данных из файла
-file_path = 'benchmark-results.csv'
+file_path = 'benchmark_results.csv'
 df = pd.read_csv(file_path)
+
+df['version'] = df['version'].str.strip()
+
+print("Versions found:", df['version'].unique())
+
 sns.set_style("whitegrid")
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 fig.suptitle(
-    'Compare algorithm scalability (Baseline vs Optimized)',
+    'Compare algorithm scalability (DoublePass vs SinglePass)',
     fontfamily="Montserrat",
     fontsize=16,
     y=1
@@ -22,7 +26,7 @@ sns.lineplot(
     y='time(ns)',
     hue='version',
     marker='o',
-    palette={'baseline': 'navy', 'optimized': 'red'}
+    palette={'DoublePass': 'navy', 'SinglePass': 'red'}
 )
 axes[0].set_title('Time complexity', fontfamily="Montserrat", fontsize=14)
 axes[0].set_xlabel('Input size (n)', fontfamily="Montserrat", fontsize=12)
@@ -32,7 +36,6 @@ axes[0].set_yscale('log')
 axes[0].legend(title='Version')
 axes[0].grid(True, which="both", ls="--", linewidth=0.5)
 
-
 sns.lineplot(
     ax=axes[1],
     data=df,
@@ -40,7 +43,7 @@ sns.lineplot(
     y='comparisons',
     hue='version',
     marker='o',
-    palette={'baseline': 'navy', 'optimized': 'red'}
+    palette={'DoublePass': 'navy', 'SinglePass': 'red'}
 )
 axes[1].set_title('Number of comparisons', fontfamily="Montserrat", fontsize=14)
 axes[1].set_xlabel('Input size (n)', fontsize=12)
