@@ -32,7 +32,7 @@ public class BoyerMooreMajorityVoteAlgorithm {
         return count > nums.length / 2 ? candidate : -1;
     }
 
-    public static int findMajorityOptimized(int[] nums, Metrics metrics) {
+    public static int findMajoritySinglePass(int[] nums, Metrics metrics) {
         if (nums == null || nums.length == 0) return -1;
 
         int count = 0;
@@ -40,6 +40,7 @@ public class BoyerMooreMajorityVoteAlgorithm {
 
         for (int num : nums) {
             metrics.comparisons++;
+
             if (count == 0) {
                 candidate = num;
                 count = 1;
@@ -51,17 +52,6 @@ public class BoyerMooreMajorityVoteAlgorithm {
             }
         }
 
-        count = 0;
-        int majorityThreshold = nums.length / 2;
-        for (int i = 0; i < nums.length; i++) {
-            metrics.comparisons++;
-            if (nums[i] == candidate) {
-                count++;
-                if (count > majorityThreshold) return candidate;
-            }
-            if (count + (nums.length - i - 1) < majorityThreshold) return -1;
-        }
-
-        return -1;
+        return candidate;
     }
 }

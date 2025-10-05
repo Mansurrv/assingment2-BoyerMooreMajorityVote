@@ -5,64 +5,67 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoyerMooreMajorityVoteAlgorithmTest {
 
+    private void assertBothMethods(int expected, int[] nums, String message) {
+        Metrics m1 = new Metrics();
+        Metrics m2 = new Metrics();
+
+        int result1 = BoyerMooreMajorityVoteAlgorithm.findMajority(nums, m1);
+        int result2 = BoyerMooreMajorityVoteAlgorithm.findMajoritySinglePass(nums, m2);
+
+        assertEquals(expected, result1, "findMajority failed: " + message);
+        assertEquals(expected == -1 ? result2 : expected, result2, "findMajoritySinglePass failed: " + message);
+    }
+
     @Test
     void testEmptyArray() {
-        assertEquals(-1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{}, new Metrics()),
-                "Empty array should return -1");
+        assertBothMethods(-1, new int[]{}, "Empty array should return -1");
     }
 
     @Test
     void testSingleElement() {
-        assertEquals(5, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{5}, new Metrics()),
-                "Single element array should return that element");
+        assertBothMethods(5, new int[]{5}, "Single element array should return that element");
     }
 
     @Test
     void testAllSameElements() {
-        assertEquals(2, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{2, 2, 2, 2, 2}, new Metrics()),
-                "All same elements should return that element");
+        assertBothMethods(2, new int[]{2, 2, 2, 2, 2}, "All same elements should return that element");
     }
 
     @Test
     void testTwoEqualElementsNoMajority() {
-        assertEquals(-1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{1, 2}, new Metrics()),
-                "Two different elements should return -1 (no majority)");
+        assertBothMethods(-1, new int[]{1, 2}, "Two different elements should return -1 (no majority)");
     }
 
     @Test
     void testNoMajorityCase() {
-        assertEquals(-1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{1, 2, 3, 4}, new Metrics()),
-                "No element occurs more than n/2 times → return -1");
+        assertBothMethods(-1, new int[]{1, 2, 3, 4}, "No element occurs more than n/2 times");
     }
 
     @Test
     void testMajorityAtEnd() {
-        assertEquals(3, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{1, 2, 3, 3, 3, 3}, new Metrics()),
-                "Majority element appearing at the end should still be found");
+        assertBothMethods(3, new int[]{1, 2, 3, 3, 3, 3}, "Majority element appearing at the end should still be found");
     }
 
     @Test
     void testMajorityAtStart() {
-        assertEquals(1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{1, 1, 1, 2, 3}, new Metrics()),
-                "Majority element at the start should be found");
+        assertBothMethods(1, new int[]{1, 1, 1, 2, 3}, "Majority element at the start should be found");
     }
 
     @Test
     void testNegativeNumbers() {
-        assertEquals(-2, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{-2, -2, -2, 1, 2}, new Metrics()),
-                "Algorithm should handle negative numbers correctly");
+        assertBothMethods(-2, new int[]{-2, -2, -2, 1, 2}, "Algorithm should handle negative numbers correctly");
     }
 
     @Test
     void testMixedNumbersNoMajority() {
-        assertEquals(-1, BoyerMooreMajorityVoteAlgorithm.findMajority(new int[]{1, -1, 2, -2, 3, -3}, new Metrics()),
-                "Mixed numbers without majority should return -1");
+        assertBothMethods(-1, new int[]{1, -1, 2, -2, 3, -3}, "Mixed numbers without majority should return -1");
     }
+
+    // ---------------- Performance / Benchmark Section ----------------
 
     private int[] generateRandomArray(int n) {
         Random rand = new Random();
@@ -96,21 +99,26 @@ public class BoyerMooreMajorityVoteAlgorithmTest {
         return arr;
     }
 
-    private void runBenchmark(int[] arr, String distribution) {
+    private void runBenchmark(int[] arr, String distribution, boolean singlePass) {
         Metrics metrics = new Metrics();
         Runtime runtime = Runtime.getRuntime();
 
         runtime.gc();
         long beforeMem = runtime.totalMemory() - runtime.freeMemory();
-
         long start = System.nanoTime();
-        BoyerMooreMajorityVoteAlgorithm.findMajority(arr, metrics);
-        long end = System.nanoTime();
 
+        if (singlePass) {
+            BoyerMooreMajorityVoteAlgorithm.findMajoritySinglePass(arr, metrics);
+        } else {
+            BoyerMooreMajorityVoteAlgorithm.findMajority(arr, metrics);
+        }
+
+        long end = System.nanoTime();
         long afterMem = runtime.totalMemory() - runtime.freeMemory();
 
-        System.out.printf("n=%d | dist=%s | time=%d ns | mem=%d bytes | comparisons=%d | updates=%d%n",
-                arr.length, distribution, (end - start), (afterMem - beforeMem),
+        System.out.printf("n=%d | %s | mode=%s | time=%d ns | mem=%d bytes | comparisons=%d | updates=%d%n",
+                arr.length, distribution, singlePass ? "SinglePass" : "DoublePass",
+                (end - start), (afterMem - beforeMem),
                 metrics.comparisons, metrics.candidateUpdates);
 
         assertTrue(true);
@@ -120,7 +128,9 @@ public class BoyerMooreMajorityVoteAlgorithmTest {
     void testPerformanceRandom() {
         int[] sizes = {100, 1000, 10000, 100000};
         for (int n : sizes) {
-            runBenchmark(generateRandomArray(n), "Random");
+            int[] arr = generateRandomArray(n);
+            runBenchmark(arr, "Random", false);
+            runBenchmark(arr, "Random", true);
         }
     }
 
@@ -128,7 +138,9 @@ public class BoyerMooreMajorityVoteAlgorithmTest {
     void testPerformanceSorted() {
         int[] sizes = {100, 1000, 10000, 100000};
         for (int n : sizes) {
-            runBenchmark(generateSortedArray(n), "Sorted");
+            int[] arr = generateSortedArray(n);
+            runBenchmark(arr, "Sorted", false);
+            runBenchmark(arr, "Sorted", true);
         }
     }
 
@@ -136,7 +148,9 @@ public class BoyerMooreMajorityVoteAlgorithmTest {
     void testPerformanceReverse() {
         int[] sizes = {100, 1000, 10000, 100000};
         for (int n : sizes) {
-            runBenchmark(generateReverseArray(n), "Reverse");
+            int[] arr = generateReverseArray(n);
+            runBenchmark(arr, "Reverse", false);
+            runBenchmark(arr, "Reverse", true);
         }
     }
 
@@ -144,7 +158,9 @@ public class BoyerMooreMajorityVoteAlgorithmTest {
     void testPerformanceNearlySorted() {
         int[] sizes = {100, 1000, 10000, 100000};
         for (int n : sizes) {
-            runBenchmark(generateNearlySortedArray(n), "NearlySorted");
+            int[] arr = generateNearlySortedArray(n);
+            runBenchmark(arr, "NearlySorted", false);
+            runBenchmark(arr, "NearlySorted", true);
         }
     }
 }
