@@ -5,7 +5,7 @@
 
 
 # ![gif](https://github.com/Readme-Workflows/Readme-Icons/blob/main/icons/gifs/wave.gif) Assignment 2
-_You can upload your analysis in /docs/(name_of_your_file).pdf_
+_In /docs/Analysis_Nurtilet_ofAlgorithmMansur.pdf you can find Nurtilek's analysis_
 
 <br>
 
