@@ -25,6 +25,40 @@ https://github.com/Mansurrv/assingment2-BoyerMooreMajorityVote
 ![Algorithms](docs/performance-plots/compare_performance.png)
 ![Algorithms](docs/performance-plots/compare_algorithm_scalibility.png)
 
+## Project Structure
+
+```text
+assingment2-BoyerMooreMajorityVote/
+│
+├── main/
+│   └── java/
+│       └── org.example/
+│           ├── algorithms/
+│           │   └── BoyerMooreMajorityVoteAlgorithm.java   # Main algorithm implementation
+│           ├── cli/
+│           │   └── BenchmarkRunner.java                  # CLI for benchmarking
+│           └── metrics/
+│               └── Metrics.java                           # Metrics tracking class
+│
+├── resources/                                           # Additional resources
+├── test/
+│   └── java/
+│       └── org.example.algorithms/
+│           └── BoyerMooreMajorityVoteAlgorithmTest.java # Unit tests
+├── performance-plots/
+│   ├── compare_algorithm_scalibility.png
+│   └── compare_performance.png
+├── Cross-Review-Summary/
+│   └── Cross-Review Summary.pdf                          # Partner comparison
+├── target/                                              # Build outputs
+├── benchmark-results.csv                                 # CSV with benchmark data
+├── benchmark results.csv                                 # Alternate CSV
+├── main.py                                              # Python benchmarking script
+├── second.py                                            # Additional Python script
+├── README.md                                            # Project overview and instructions
+└── .gitignore                                           # Git ignore file
+
+```
 
 <br>
 
