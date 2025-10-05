@@ -20,7 +20,7 @@ https://github.com/Mansurrv/assingment2-BoyerMooreMajorityVote
 <br>
 
 ## 🖼 Diagrams
->The **Boyer-Moore Majority Vote Algorithm** is an elegant and highly efficient method for finding the **Majority Element** in an array. A Majority Element is defined as an element that appears **more than $N/2$ times** in an array of length $N$.
+>The **Boyer-Moore Majority Vote Algorithm** is an elegant and highly efficient method for finding the **Majority Element** in an array. A Majority Element is defined as an element that appears **more than _N/2_ times** in an array of length _N_.
 
 ![Algorithms](docs/performance-plots/compare_performance.png)
 ![Algorithms](docs/performance-plots/compare_algorithm_scalibility.png)
